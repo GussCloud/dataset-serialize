@@ -45,12 +45,14 @@ type
 
   TDataSetSerializeConfigImport = class
   private
+    FDecodeBase64BlobField: Boolean;
     FImportOnlyFieldsVisible: Boolean;
     FDecimalSeparator: Char;
   public
     constructor Create;
     property ImportOnlyFieldsVisible: Boolean read FImportOnlyFieldsVisible write FImportOnlyFieldsVisible;
     property DecimalSeparator: Char read FDecimalSeparator write FDecimalSeparator;
+    property DecodeBase64BlobField: Boolean read FDecodeBase64BlobField write FDecodeBase64BlobField;
   end;
 
   TDataSetSerializeConfig = class
@@ -76,7 +78,7 @@ type
     property &Export: TDataSetSerializeConfigExport read FExport write FExport;
     property Import: TDataSetSerializeConfigImport read FImport write FImport;
     class function GetInstance: TDataSetSerializeConfig;
-    class destructor UnInitialize;
+    class procedure UnInitialize;
   end;
 
 implementation
@@ -124,7 +126,7 @@ begin
   Result := TDataSetSerializeConfig.GetDefaultInstance;
 end;
 
-class destructor TDataSetSerializeConfig.UnInitialize;
+class procedure TDataSetSerializeConfig.UnInitialize;
 begin
   if Assigned(FInstance) then
     FreeAndNil(FInstance);
@@ -148,10 +150,18 @@ begin
   {$ENDIF}
 end;
 
+{ TDataSetSerializeConfigImport }
+
 constructor TDataSetSerializeConfigImport.Create;
 begin
   FDecimalSeparator := '.';
   FImportOnlyFieldsVisible := True;
+  FDecodeBase64BlobField := True;
 end;
+
+initialization
+
+finalization
+  TDataSetSerializeConfig.UnInitialize;
 
 end.
